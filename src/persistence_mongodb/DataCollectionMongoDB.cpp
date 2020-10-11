@@ -20,20 +20,25 @@ using namespace ghost::internal;
 
 bool DataCollectionMongoDB::remove(size_t index)
 {
+	return false;
 }
 
 const std::string& DataCollectionMongoDB::getName() const
 {
+	return "";
 }
 
 size_t DataCollectionMongoDB::size() const
 {
+	return 0;
 }
 
 std::vector<std::shared_ptr<google::protobuf::Any>> DataCollectionMongoDB::fetch(const std::string& typeName)
 {
+	return {};
 }
 
 bool DataCollectionMongoDB::push(const std::shared_ptr<google::protobuf::Any>& data, int index)
 {
+	return false;
 }

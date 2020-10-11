@@ -20,6 +20,7 @@ using namespace ghost::internal;
 
 bool DatabaseMongoDB::open()
 {
+	return false;
 }
 
 void DatabaseMongoDB::close()
@@ -28,12 +29,15 @@ void DatabaseMongoDB::close()
 
 std::shared_ptr<ghost::DataCollection> DatabaseMongoDB::addCollection(const std::string& name)
 {
+	return nullptr;
 }
 
 bool DatabaseMongoDB::removeCollection(const std::string& name)
 {
+	return false;
 }
 
 std::list<std::shared_ptr<ghost::DataCollection>> DatabaseMongoDB::getCollection(const std::string& name) const
 {
+	return {};
 }
