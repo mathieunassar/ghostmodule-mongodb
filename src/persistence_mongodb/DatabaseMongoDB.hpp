@@ -26,6 +26,12 @@ namespace internal
 class DatabaseMongoDB : public ghost::DatabaseMongoDB
 {
 public:
+	bool open() override;
+	void close() override;
+
+	std::shared_ptr<ghost::DataCollection> addCollection(const std::string& name) override;
+	bool removeCollection(const std::string& name) override;
+	std::list<std::shared_ptr<ghost::DataCollection>> getCollection(const std::string& name) const override;
 };
 } // namespace internal
 } // namespace ghost

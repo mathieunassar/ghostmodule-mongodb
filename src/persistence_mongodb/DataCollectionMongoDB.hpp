@@ -26,6 +26,13 @@ namespace internal
 class DataCollectionMongoDB : public ghost::DataCollection
 {
 public:
+	bool remove(size_t index) override;
+	const std::string& getName() const override;
+	size_t size() const override;
+
+protected:
+	std::vector<std::shared_ptr<google::protobuf::Any>> fetch(const std::string& typeName = "") override;
+	bool push(const std::shared_ptr<google::protobuf::Any>& data, int index = -1) override;
 };
 } // namespace internal
 } // namespace ghost

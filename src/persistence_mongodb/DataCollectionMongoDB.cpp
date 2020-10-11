@@ -17,3 +17,23 @@
 #include "DataCollectionMongoDB.hpp"
 
 using namespace ghost::internal;
+
+bool DataCollectionMongoDB::remove(size_t index)
+{
+}
+
+const std::string& DataCollectionMongoDB::getName() const
+{
+}
+
+size_t DataCollectionMongoDB::size() const
+{
+}
+
+std::vector<std::shared_ptr<google::protobuf::Any>> DataCollectionMongoDB::fetch(const std::string& typeName)
+{
+}
+
+bool DataCollectionMongoDB::push(const std::shared_ptr<google::protobuf::Any>& data, int index)
+{
+}
