@@ -1,0 +1,10 @@
+.DS_Store
+/.project
+build/
+bin/
+*.pb.h
+*.pb.cc
+tests/protobuf/*.pb.h
+tests/protobuf/*.pb.cc
+generated/*.pb.h
+generated/*.pb.cc
