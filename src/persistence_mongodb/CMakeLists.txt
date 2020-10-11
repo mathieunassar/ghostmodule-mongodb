@@ -4,16 +4,22 @@
 
 file(GLOB header_persistencemongodb_lib
 	${GHOST_MODULE_MONGODB_ROOT_DIR}/include/ghost/persistence_mongodb/DatabaseMongoDB.hpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/include/ghost/persistence_mongodb/PersistenceMongoDBExtension.hpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/include/ghost/persistence_mongodb/PersistenceMongoDBExtensionBuilder.hpp
 )
 
 file(GLOB header_persistencemongodb_internal_lib
 	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/DatabaseMongoDB.hpp
 	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/DataCollectionMongoDB.hpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/PersistenceMongoDBExtension.hpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/PersistenceMongoDBExtensionBuilder.hpp
 )
 
 file(GLOB source_persistencemongodb_lib
 	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/DatabaseMongoDB.cpp
 	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/DataCollectionMongoDB.cpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/PersistenceMongoDBExtension.cpp
+	${GHOST_MODULE_MONGODB_ROOT_DIR}/src/persistence_mongodb/PersistenceMongoDBExtensionBuilder.cpp
 )
 
 source_group("API" FILES ${header_persistencemongodb_lib})
