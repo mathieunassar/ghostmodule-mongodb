@@ -18,6 +18,10 @@
 #define GHOST_INTERNAL_DATABASEMONGODB_HPP
 
 #include <ghost/persistence_mongodb/DatabaseMongoDB.hpp>
+#include <list>
+#include <memory>
+#include <mongocxx/pool.hpp>
+#include <string>
 
 namespace ghost
 {
@@ -26,12 +30,18 @@ namespace internal
 class DatabaseMongoDB : public ghost::DatabaseMongoDB
 {
 public:
+	DatabaseMongoDB(const std::shared_ptr<mongocxx::pool>& pool, const std::string& name);
+
 	bool open() override;
 	void close() override;
 
 	std::shared_ptr<ghost::DataCollection> addCollection(const std::string& name) override;
 	bool removeCollection(const std::string& name) override;
 	std::list<std::shared_ptr<ghost::DataCollection>> getCollection(const std::string& name) const override;
+
+private:
+	std::shared_ptr<mongocxx::pool> _pool;
+	std::string _name;
 };
 } // namespace internal
 } // namespace ghost

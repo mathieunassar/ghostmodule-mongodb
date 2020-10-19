@@ -17,7 +17,12 @@
 #ifndef GHOST_INTERNAL_DATACOLLECTIONMONGODB_HPP
 #define GHOST_INTERNAL_DATACOLLECTIONMONGODB_HPP
 
+#include <google/protobuf/any.pb.h>
 #include <ghost/persistence/DataCollection.hpp>
+#include <memory>
+#include <mongocxx/pool.hpp>
+#include <string>
+#include <vector>
 
 namespace ghost
 {
@@ -26,13 +31,22 @@ namespace internal
 class DataCollectionMongoDB : public ghost::DataCollection
 {
 public:
+	DataCollectionMongoDB(const std::shared_ptr<mongocxx::pool>& pool, const std::string& dbname,
+			      const std::string& name);
 	bool remove(size_t index) override;
 	const std::string& getName() const override;
 	size_t size() const override;
 
 protected:
-	std::vector<std::shared_ptr<google::protobuf::Any>> fetch(const std::string& typeName = "") override;
-	bool push(const std::shared_ptr<google::protobuf::Any>& data, int index = -1) override;
+	std::map<size_t, std::shared_ptr<google::protobuf::Message>> fetch(
+	    const std::function<std::shared_ptr<google::protobuf::Message>()>& messageFactory,
+	    std::list<size_t> idFilter = {}) override;
+	bool push(const google::protobuf::Message& data, size_t id = std::numeric_limits<size_t>::max()) override;
+
+private:
+	std::shared_ptr<mongocxx::pool> _pool;
+	std::string _dbname;
+	std::string _name;
 };
 } // namespace internal
 } // namespace ghost

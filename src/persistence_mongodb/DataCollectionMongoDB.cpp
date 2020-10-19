@@ -18,6 +18,12 @@
 
 using namespace ghost::internal;
 
+DataCollectionMongoDB::DataCollectionMongoDB(const std::shared_ptr<mongocxx::pool>& pool, const std::string& dbname,
+					     const std::string& name)
+    : _pool(pool), _dbname(dbname), _name(name)
+{
+}
+
 bool DataCollectionMongoDB::remove(size_t index)
 {
 	return false;
@@ -25,7 +31,7 @@ bool DataCollectionMongoDB::remove(size_t index)
 
 const std::string& DataCollectionMongoDB::getName() const
 {
-	return "";
+	return _name;
 }
 
 size_t DataCollectionMongoDB::size() const
@@ -33,12 +39,13 @@ size_t DataCollectionMongoDB::size() const
 	return 0;
 }
 
-std::vector<std::shared_ptr<google::protobuf::Any>> DataCollectionMongoDB::fetch(const std::string& typeName)
+std::map<size_t, std::shared_ptr<google::protobuf::Message>> DataCollectionMongoDB::fetch(
+    const std::function<std::shared_ptr<google::protobuf::Message>()>& messageFactory, std::list<size_t> idFilter)
 {
 	return {};
 }
 
-bool DataCollectionMongoDB::push(const std::shared_ptr<google::protobuf::Any>& data, int index)
+bool DataCollectionMongoDB::push(const google::protobuf::Message& data, size_t id)
 {
 	return false;
 }

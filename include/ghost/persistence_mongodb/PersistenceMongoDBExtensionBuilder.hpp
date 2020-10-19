@@ -18,12 +18,20 @@
 #define GHOST_PERSISTENCEMONGODBEXTENSIONBUILDER_HPP
 
 #include <ghost/module/ModuleExtensionBuilder.hpp>
+#include <mongocxx/uri.hpp>
 
 namespace ghost
 {
 class PersistenceMongoDBExtensionBuilder : public ghost::ModuleExtensionBuilder
 {
 public:
+	/**
+	 *	Registers a mongoDB URI to set up a client pool and optimize the resource usage
+	 *	when accessing the database.
+	 *	@param uri a mongoDB URI object containing the connection parameters to a MongoDB
+	 *		node.
+	 */
+	virtual void addConnection(const mongocxx::uri& uri) = 0;
 };
 } // namespace ghost
 

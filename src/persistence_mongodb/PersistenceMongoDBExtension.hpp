@@ -18,6 +18,8 @@
 #define GHOST_INTERNAL_PERSISTENCEMONGODBEXTENSION_HPP
 
 #include <ghost/persistence_mongodb/PersistenceMongoDBExtension.hpp>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
 
 namespace ghost
 {
@@ -26,9 +28,20 @@ namespace internal
 class PersistenceMongoDBExtension : public ghost::PersistenceMongoDBExtension
 {
 public:
+	// From ghost::ModuleExtension
 	bool start() override;
 	void stop() override;
 	std::string getName() const override;
+
+	// From ghost::PersistenceMongoDBExtension
+	void addConnection(const mongocxx::uri& uri) override;
+	std::shared_ptr<ghost::DatabaseMongoDB> openDatabase(const std::string& name,
+							     const mongocxx::uri& uri) override;
+	std::list<std::string> getDatabaseNames() const override;
+
+private:
+	mongocxx::instance _instance;
+	std::map<std::string, std::shared_ptr<mongocxx::pool>> _connections;
 };
 } // namespace internal
 } // namespace ghost

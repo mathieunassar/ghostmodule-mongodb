@@ -15,12 +15,18 @@
  */
 
 #include "DatabaseMongoDB.hpp"
+#include "DataCollectionMongoDB.hpp"
 
 using namespace ghost::internal;
 
+DatabaseMongoDB::DatabaseMongoDB(const std::shared_ptr<mongocxx::pool>& pool, const std::string& name)
+    : _pool(pool), _name(name)
+{
+}
+
 bool DatabaseMongoDB::open()
 {
-	return false;
+	return true;
 }
 
 void DatabaseMongoDB::close()
@@ -29,7 +35,7 @@ void DatabaseMongoDB::close()
 
 std::shared_ptr<ghost::DataCollection> DatabaseMongoDB::addCollection(const std::string& name)
 {
-	return nullptr;
+	return std::make_shared<DataCollectionMongoDB>(_pool, _name, name);
 }
 
 bool DatabaseMongoDB::removeCollection(const std::string& name)
