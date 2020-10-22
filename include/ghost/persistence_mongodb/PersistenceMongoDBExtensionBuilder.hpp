@@ -25,13 +25,14 @@ namespace ghost
 class PersistenceMongoDBExtensionBuilder : public ghost::ModuleExtensionBuilder
 {
 public:
+	static std::shared_ptr<PersistenceMongoDBExtensionBuilder> create();
 	/**
 	 *	Registers a mongoDB URI to set up a client pool and optimize the resource usage
 	 *	when accessing the database.
 	 *	@param uri a mongoDB URI object containing the connection parameters to a MongoDB
 	 *		node.
 	 */
-	virtual void addConnection(const mongocxx::uri& uri) = 0;
+	virtual ghost::PersistenceMongoDBExtensionBuilder& addConnection(const mongocxx::uri& uri) = 0;
 };
 } // namespace ghost
 

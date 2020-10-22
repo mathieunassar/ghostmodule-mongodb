@@ -26,6 +26,7 @@ namespace ghost
 class PersistenceMongoDBExtension : public ghost::ModuleExtension
 {
 public:
+	static const std::string getExtensionName();
 	/**
 	 *	Registers a mongoDB URI to set up a client pool and optimize the resource usage
 	 *	when accessing the database.

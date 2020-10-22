@@ -15,10 +15,25 @@
  */
 
 #include "PersistenceMongoDBExtensionBuilder.hpp"
+#include "PersistenceMongoDBExtension.hpp"
 
 using namespace ghost::internal;
 
+std::shared_ptr<ghost::PersistenceMongoDBExtensionBuilder> ghost::PersistenceMongoDBExtensionBuilder::create()
+{
+	return std::make_shared<ghost::internal::PersistenceMongoDBExtensionBuilder>();
+}
+
+ghost::PersistenceMongoDBExtensionBuilder& PersistenceMongoDBExtensionBuilder::addConnection(const mongocxx::uri& uri)
+{
+	_connections.push_back(uri.to_string());
+	return *this;
+}
+
 std::shared_ptr<ghost::ModuleExtension> PersistenceMongoDBExtensionBuilder::build()
 {
-	return nullptr;
+	auto extension = std::make_shared<ghost::internal::PersistenceMongoDBExtension>();
+	for (const auto& uri : _connections) extension->addConnection({uri});
+
+	return extension;
 }

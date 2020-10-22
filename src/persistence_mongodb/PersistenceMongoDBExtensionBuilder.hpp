@@ -26,7 +26,11 @@ namespace internal
 class PersistenceMongoDBExtensionBuilder : public ghost::PersistenceMongoDBExtensionBuilder
 {
 public:
+	ghost::PersistenceMongoDBExtensionBuilder& addConnection(const mongocxx::uri& uri) override;
 	std::shared_ptr<ghost::ModuleExtension> build() override;
+
+private:
+	std::list<std::string> _connections;
 };
 } // namespace internal
 } // namespace ghost

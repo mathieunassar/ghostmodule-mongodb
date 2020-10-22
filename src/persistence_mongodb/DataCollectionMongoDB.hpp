@@ -33,15 +33,15 @@ class DataCollectionMongoDB : public ghost::DataCollection
 public:
 	DataCollectionMongoDB(const std::shared_ptr<mongocxx::pool>& pool, const std::string& dbname,
 			      const std::string& name);
-	bool remove(size_t index) override;
+	bool remove(const std::string& index) override;
 	const std::string& getName() const override;
 	size_t size() const override;
 
 protected:
-	std::map<size_t, std::shared_ptr<google::protobuf::Message>> fetch(
+	std::map<std::string, std::shared_ptr<google::protobuf::Message>> fetch(
 	    const std::function<std::shared_ptr<google::protobuf::Message>()>& messageFactory,
-	    std::list<size_t> idFilter = {}) override;
-	bool push(const google::protobuf::Message& data, size_t id = std::numeric_limits<size_t>::max()) override;
+	    std::list<std::string> idFilter = {}) override;
+	std::string push(const google::protobuf::Message& data, const std::string& id = "") override;
 
 private:
 	std::shared_ptr<mongocxx::pool> _pool;

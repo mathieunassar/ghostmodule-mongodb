@@ -15,14 +15,27 @@
  */
 
 #include "PersistenceMongoDBExtension.hpp"
+#include <mongocxx/client.hpp>
 #include "DatabaseMongoDB.hpp"
 
 using namespace ghost::internal;
 
+const std::string ghost::PersistenceMongoDBExtension::getExtensionName()
+{
+	return "PersistenceMongoDBExtension";
+}
+
 bool PersistenceMongoDBExtension::start()
 {
 	for (auto& connection : _connections)
+	{
+		// Don't initialize already initialized pools
+		if (connection.second) continue;
+
+		// Start the mongo client pool
 		connection.second = std::make_shared<mongocxx::pool>(mongocxx::uri{connection.first});
+	}
+
 	return true;
 }
 
@@ -32,7 +45,7 @@ void PersistenceMongoDBExtension::stop()
 
 std::string PersistenceMongoDBExtension::getName() const
 {
-	return "PersistenceMongoDBExtension";
+	return ghost::PersistenceMongoDBExtension::getExtensionName();
 }
 
 void PersistenceMongoDBExtension::addConnection(const mongocxx::uri& uri)
@@ -51,10 +64,21 @@ std::shared_ptr<ghost::DatabaseMongoDB> PersistenceMongoDBExtension::openDatabas
 
 	auto database = std::make_shared<DatabaseMongoDB>(_connections.at(uri.to_string()), name);
 	database->open();
+
 	return database;
 }
 
 std::list<std::string> PersistenceMongoDBExtension::getDatabaseNames() const
 {
-	return {};
+	std::list<std::string> result;
+	for (const auto& connection : _connections)
+	{
+		if (!connection.second) continue;
+
+		auto client = connection.second->acquire();
+		mongocxx::cursor cursor = (*client).list_databases();
+
+		for (auto doc : cursor) result.push_back(doc["name"].get_utf8().value.to_string());
+	}
+	return result;
 }

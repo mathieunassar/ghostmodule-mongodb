@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+#include <bsoncxx/exception/exception.hpp>
 #include <ghost/module/GhostLogger.hpp>
 #include <ghost/module/Module.hpp>
 #include <ghost/module/ModuleBuilder.hpp>
 #include <ghost/persistence/DataManager.hpp>
-#include <ghost/persistence/DatabaseFile.hpp>
+#include <ghost/persistence_mongodb/DatabaseMongoDB.hpp>
+#include <ghost/persistence_mongodb/PersistenceMongoDBExtension.hpp>
+#include <ghost/persistence_mongodb/PersistenceMongoDBExtensionBuilder.hpp>
 
 #include "protobuf/persistency_todo_list.pb.h"
 
@@ -40,33 +43,11 @@ public:
 		// save the data.
 		_dataManager = ghost::DataManager::create();
 
-		auto fileDatabases = ghost::DatabaseFile::load(".", {TODO_LIST_NAME});
+		auto database = module.getExtension<ghost::PersistenceMongoDBExtension>()->openDatabase(
+		    TODO_LIST_NAME, {"mongodb://localhost:27017"});
+		_dataManager->addDatabase(database, TODO_LIST_NAME);
 
-		// Try to load existing data. It should return true if the program was already executed once.
-		if (!fileDatabases.empty())
-		{
-			// If data was loaded, we will work on the first data set (ghost::SaveData) available in the
-			// save.
-			_database = fileDatabases[TODO_LIST_NAME];
-			_dataManager->addDatabase(_database, TODO_LIST_NAME);
-
-			auto existingData = _dataManager->getCollection(TODO_LIST_NAME);
-			if (existingData.find(TODO_LIST_NAME) != existingData.end() &&
-			    existingData.at(TODO_LIST_NAME).size() > 0)
-			{
-				_todoList = existingData.at(TODO_LIST_NAME).front();
-				GHOST_INFO(module.getLogger()) << "Loaded existing todo list.";
-			}
-		}
-		if (!_todoList)
-		{
-			// If no data was loaded, let's create a first data set with the name "TodoList".
-			// When "save" is called on the file database, this data set will be saved in a file called
-			// "TodoList".
-			_database = ghost::DatabaseFile::create(TODO_LIST_NAME);
-			_dataManager->addDatabase(_database, TODO_LIST_NAME);
-			_todoList = _database->addCollection(TODO_LIST_NAME);
-		}
+		_todoList = _dataManager->addCollection(TODO_LIST_NAME, TODO_LIST_NAME);
 
 		return true;
 	}
@@ -106,7 +87,7 @@ public:
 		{
 			GHOST_INFO(module.getLogger()) << "Current TODOs: ";
 			_todoList->get_if<ghost::examples::protobuf::Todo>(
-			    [&](const ghost::examples::protobuf::Todo& todo, size_t id) {
+			    [&](const ghost::examples::protobuf::Todo& todo, const std::string& id) {
 				    GHOST_INFO(module.getLogger()) << "TODO #" << id << ": " << todo.title();
 				    return true;
 			    });
@@ -122,8 +103,6 @@ public:
 		// To add a todo, this function simply requests a title from the user, creates a "Todo"
 		// message and adds it to the ghost::SaveData object.
 		_todoList->put(todo);
-		// Once we are done working on the save, we can save it on the disk.
-		_database->save(true);
 		GHOST_INFO(module.getLogger()) << "Added new TODO.";
 	}
 
@@ -131,18 +110,14 @@ public:
 	{
 		GHOST_INFO(module.getLogger()) << "Enter the ID (#) of the TODO to remove: ";
 		auto title = module.getConsole()->getLine();
-		int id = std::stoi(title);
 		// Similarly to the "addTodo" method, this method requests the ID of a TODO to remove
 		// and removes it from the ghost::SaveData object.
-		_todoList->remove(id);
-		// Here again, we save the new content of the save to the disk.
-		_database->save(true);
+		_todoList->remove(title);
 		GHOST_INFO(module.getLogger()) << "Removed TODO";
 	}
 
 private:
 	std::shared_ptr<ghost::DataManager> _dataManager;
-	std::shared_ptr<ghost::DatabaseFile> _database;
 	std::shared_ptr<ghost::DataCollection> _todoList;
 
 	const std::string TODO_LIST_NAME = "TodoList";
@@ -163,11 +138,16 @@ int main(int argc, char** argv)
 	builder->setLogger(ghost::GhostLogger::create(console));
 	// Parse the program options to determine what to do:
 	builder->setProgramOptions(argc, argv);
+
+	auto mongoBuilder = ghost::PersistenceMongoDBExtensionBuilder::create();
+	mongoBuilder->addConnection({"mongodb://localhost:27017"});
+	builder->addExtensionBuilder(mongoBuilder);
+
 	// The following line creates the module with all the parameters, and names it "myModuleInstance0".
 	std::shared_ptr<ghost::Module> module = builder->build();
 
-	// If the build process is successful, we can start the module. If it were not successful, we would have nullptr
-	// here.
+	// If the build process is successful, we can start the module.
+	// If it were not successful, we would have nullptr here.
 	if (module) module->start();
 
 	// Start blocks until the module ends.

@@ -45,5 +45,5 @@ bool DatabaseMongoDB::removeCollection(const std::string& name)
 
 std::list<std::shared_ptr<ghost::DataCollection>> DatabaseMongoDB::getCollection(const std::string& name) const
 {
-	return {};
+	return {std::make_shared<DataCollectionMongoDB>(_pool, _name, name)};
 }
