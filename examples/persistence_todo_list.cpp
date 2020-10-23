@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Mathieu Nassar
+ * Copyright 2020 Mathieu Nassar
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 #include <ghost/module/Module.hpp>
 #include <ghost/module/ModuleBuilder.hpp>
 #include <ghost/persistence/DataManager.hpp>
+#include <ghost/persistence_extension/PersistenceExtension.hpp>
+#include <ghost/persistence_extension/PersistenceExtensionBuilder.hpp>
 #include <ghost/persistence_mongodb/DatabaseMongoDB.hpp>
 #include <ghost/persistence_mongodb/PersistenceMongoDBExtension.hpp>
 #include <ghost/persistence_mongodb/PersistenceMongoDBExtensionBuilder.hpp>
@@ -39,13 +41,10 @@ public:
 	// in the "examples/protobuf" folder of this repository (the example uses the "Todo" message).
 	bool initialize(const ghost::Module& module)
 	{
-		// First, create an instance of the ghost::SaveManager, that uses "." as its root path to
-		// save the data.
-		_dataManager = ghost::DataManager::create();
-
 		auto database = module.getExtension<ghost::PersistenceMongoDBExtension>()->openDatabase(
 		    TODO_LIST_NAME, {"mongodb://localhost:27017"});
-		_dataManager->addDatabase(database, TODO_LIST_NAME);
+		auto dataManager = module.getExtension<ghost::PersistenceExtension>()->getDataManager();
+		dataManager->addDatabase(database, TODO_LIST_NAME);
 
 		_todoList = _dataManager->addCollection(TODO_LIST_NAME, TODO_LIST_NAME);
 
@@ -88,7 +87,7 @@ public:
 			GHOST_INFO(module.getLogger()) << "Current TODOs: ";
 			_todoList->get_if<ghost::examples::protobuf::Todo>(
 			    [&](const ghost::examples::protobuf::Todo& todo, const std::string& id) {
-				    GHOST_INFO(module.getLogger()) << "TODO #" << id << ": " << todo.title();
+				    GHOST_INFO(module.getLogger()) << "TODO # " << id << ": " << todo.title();
 				    return true;
 			    });
 		}
@@ -139,6 +138,10 @@ int main(int argc, char** argv)
 	// Parse the program options to determine what to do:
 	builder->setProgramOptions(argc, argv);
 
+	// Add the Persistence extension in order to use a shared ghost::DataManager
+	builder->addExtensionBuilder(ghost::PersistenceExtensionBuilder::create());
+
+	// We will use the new MongoDB extension as a database
 	auto mongoBuilder = ghost::PersistenceMongoDBExtensionBuilder::create();
 	mongoBuilder->addConnection({"mongodb://localhost:27017"});
 	builder->addExtensionBuilder(mongoBuilder);
