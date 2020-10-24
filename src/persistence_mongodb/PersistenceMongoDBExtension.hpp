@@ -20,6 +20,10 @@
 #include <ghost/persistence_mongodb/PersistenceMongoDBExtension.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/pool.hpp>
+#include <string>
+#include <list>
+#include <memory>
+#include <map>
 
 namespace ghost
 {

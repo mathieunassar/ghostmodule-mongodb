@@ -19,10 +19,11 @@
 
 #include <google/protobuf/any.pb.h>
 #include <ghost/persistence/DataCollection.hpp>
+#include <list>
+#include <map>
 #include <memory>
 #include <mongocxx/pool.hpp>
 #include <string>
-#include <vector>
 
 namespace ghost
 {

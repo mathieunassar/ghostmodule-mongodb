@@ -19,6 +19,7 @@
 
 #include <ghost/module/ModuleExtensionBuilder.hpp>
 #include <mongocxx/uri.hpp>
+#include <memory>
 
 namespace ghost
 {

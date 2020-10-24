@@ -18,6 +18,9 @@
 #define GHOST_INTERNAL_PERSISTENCEMONGODBEXTENSIONBUILDER_HPP
 
 #include <ghost/persistence_mongodb/PersistenceMongoDBExtensionBuilder.hpp>
+#include <list>
+#include <memory>
+#include <mongocxx/uri.hpp>
 
 namespace ghost
 {
