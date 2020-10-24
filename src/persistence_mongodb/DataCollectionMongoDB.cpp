@@ -128,7 +128,7 @@ std::string DataCollectionMongoDB::push(const google::protobuf::Message& data, c
 
 	std::string json;
 	auto jsonConversion = google::protobuf::util::MessageToJsonString(data, &json);
-	if (!jsonConversion.ok()) return false;
+	if (!jsonConversion.ok()) return "";
 	builder << bsoncxx::builder::concatenate(bsoncxx::from_json(json));
 
 	// Create the upsert mongo command from the filter and the builder
