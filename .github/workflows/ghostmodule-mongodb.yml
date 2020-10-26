@@ -49,6 +49,8 @@ jobs:
       
       - name: CMake Build
         run: cmake --build .
+        working-directory: ./build
         
       - name: CTest
         run: ctest . -C Release
+        working-directory: ./build
