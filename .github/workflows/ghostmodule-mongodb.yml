@@ -26,7 +26,7 @@ jobs:
       
       - name: Install Conan
         run: |
-          pip install conan
+          pip3 install conan
           conan --version
 
       - name: Conan Configuration
