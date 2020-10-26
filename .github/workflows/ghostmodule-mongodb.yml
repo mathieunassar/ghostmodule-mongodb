@@ -31,16 +31,15 @@ jobs:
       
       - name: Install Conan
         run: |
-          python --version
           pip3 --version
           pip3 install conan
-          conan --version
 
       - name: Conan Configuration
         run: |
           conan user
           conan remote add inexorgame "https://api.bintray.com/conan/inexorgame/inexor-conan"
           conan remote add ghostrobotics "https://api.bintray.com/conan/mathieunassar/ghostrobotics"
+          conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
       
       - name: CMake Configure
         run: |
