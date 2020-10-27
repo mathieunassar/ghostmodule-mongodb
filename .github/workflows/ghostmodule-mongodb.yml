@@ -24,25 +24,39 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x' 
+      
       - name: Install Conan
         run: |
+          pip3 --version
           pip3 install conan
-          conan --version
+          
+      - name: Cache Conan Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.conan/data
+          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.py') }}
 
       - name: Conan Configuration
         run: |
           conan user
           conan remote add inexorgame "https://api.bintray.com/conan/inexorgame/inexor-conan"
           conan remote add ghostrobotics "https://api.bintray.com/conan/mathieunassar/ghostrobotics"
+          conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
       
       - name: CMake Configure
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=True
       
       - name: CMake Build
         run: cmake --build .
+        working-directory: ./build
         
       - name: CTest
         run: ctest . -C Release
+        working-directory: ./build
