@@ -1,0 +1,48 @@
+name: ghostmodule-mongodb-ci
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      
+      - name: Install Conan
+        run: |
+          pip3 install conan
+          conan --version
+
+      - name: Conan Configuration
+        run: |
+          conan user
+          conan remote add inexorgame "https://api.bintray.com/conan/inexorgame/inexor-conan"
+          conan remote add ghostrobotics "https://api.bintray.com/conan/mathieunassar/ghostrobotics"
+      
+      - name: CMake Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON
+      
+      - name: CMake Build
+        run: cmake --build .
+        
+      - name: CTest
+        run: ctest . -C Release
