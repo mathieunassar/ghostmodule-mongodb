@@ -1,5 +1,5 @@
 [requires]
-mongo-cxx-driver/3.3.0@bincrafters/stable
+mongo-cxx-driver/3.4.0@bincrafters/testing
 ghostmodule/1.4@mathieunassar/stable
 grpc/1.20.0@inexorgame/stable
 protobuf/3.6.1@bincrafters/stable
@@ -8,3 +8,7 @@ gtest/1.8.1@bincrafters/stable
 
 [generators]
 cmake
+
+[options]
+mongo-cxx-driver:shared=True
+protobuf:shared=False
