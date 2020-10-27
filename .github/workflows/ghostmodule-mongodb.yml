@@ -17,7 +17,7 @@ jobs:
     
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.conan/data
-          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.py') }}
+          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.txt') }}
 
       - name: Conan Configuration
         run: |
@@ -51,7 +51,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=True
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -G "Visual Studio 15 Win64"
       
       - name: CMake Build
         run: cmake --build .
