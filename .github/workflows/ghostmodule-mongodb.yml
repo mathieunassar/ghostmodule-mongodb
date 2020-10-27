@@ -33,6 +33,12 @@ jobs:
         run: |
           pip3 --version
           pip3 install conan
+          
+      - name: Cache Conan Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.conan/data
+          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.py') }}
 
       - name: Conan Configuration
         run: |
@@ -45,7 +51,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=True
       
       - name: CMake Build
         run: cmake --build .
