@@ -24,8 +24,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1.4.1
-        with:
-          toolset: 15.0
       
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
@@ -53,6 +51,7 @@ jobs:
       - name: CMake Configure
         run: |
           mkdir build
+          conan install . --build=protobuf --build=missing
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON
       
