@@ -27,8 +27,11 @@ jobs:
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x' 
-      
+          python-version: '3.x'
+          
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+              
       - name: Install Conan
         run: |
           pip3 --version
