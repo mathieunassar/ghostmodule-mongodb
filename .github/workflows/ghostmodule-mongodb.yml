@@ -16,9 +16,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     #windows-2016
+    #[ubuntu-latest, windows-latest, macos-latest]
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -60,7 +61,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON ..
+          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON -G "Visual Studio 15 Win64" ..
       
       - name: CMake Build
         run: cmake --build . --config Release
