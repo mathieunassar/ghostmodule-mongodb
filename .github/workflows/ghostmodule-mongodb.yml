@@ -38,7 +38,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.conan/data
-          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.py') }}
+          key: ${{ runner.os }}-build-ghostmodule-mongodb-${{ hashFiles('conanfile.txt') }}
 
       - name: Conan Configuration
         run: |
