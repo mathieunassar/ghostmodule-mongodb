@@ -23,8 +23,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      #- uses: ilammy/msvc-dev-cmd@v1.4.1
-      
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+        with:
+          toolset: 14.11
+     
+      - name: Select XCode
+        if: matrix.os == 'macos-latest'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
+          clang -v
+             
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
