@@ -50,7 +50,6 @@ jobs:
       - name: CMake Configure
         run: |
           mkdir build
-          conan install . --build=missing
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON ..
       
