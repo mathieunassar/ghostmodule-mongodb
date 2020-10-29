@@ -17,14 +17,20 @@ jobs:
     
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-2016, macos-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: ilammy/msvc-dev-cmd@v1.4.1
-      
+     
+      - name: Select XCode
+        if: matrix.os == 'macos-latest'
+        run: |
+          sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
+          clang -v
+             
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
@@ -44,19 +50,17 @@ jobs:
       - name: Conan Configuration
         run: |
           conan user
-          conan remote add inexorgame "https://api.bintray.com/conan/inexorgame/inexor-conan"
           conan remote add ghostrobotics "https://api.bintray.com/conan/mathieunassar/ghostrobotics"
           conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
       
       - name: CMake Configure
         run: |
           mkdir build
-          conan install . --build=protobuf --build=missing
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON
+          cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_EXAMPLES=ON -DBUILD_TESTS=ON ..
       
       - name: CMake Build
-        run: cmake --build .
+        run: cmake --build . --config Release
         working-directory: ./build
         
       - name: CTest
